@@ -1,0 +1,47 @@
+﻿@page "/TicketDetail/{id:int}"
+@using AppLogic.Services.TagService
+@using Shared.Models
+@inject ITicketServices ticketService
+@using AppLogic.Services.TicketServices
+@inject ITagService tagservice
+@using Shared.Models.Shared.Models
+
+
+@if (ticket != null)
+{
+    <h3>Detaljer om ticket</h3>
+    <div>
+        <p><strong>ID:</strong> @ticket.Id</p>
+        <p><strong>Rubrik:</strong> @ticket.Title</p>
+        <p><strong>Beskrivning:</strong> @ticket.Description</p>
+    </div>
+}
+
+
+
+@code {
+
+    TicketViewModel? ticket;
+    List <TicketTagViewModel> ticketTags =new();
+    List<TagViewModel> viewModelTags = new();
+
+    [Parameter]
+    public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        // Hämta ticket-detaljer från API:et med id
+        var apiTicket = await ticketService.GetTicketById(id);
+
+        if (apiTicket != null)
+        {
+            // Omvandla API-modellen till en ViewModel
+            ticket = TicketViewModel.TicketViewModelFromApiModel(apiTicket);
+
+         
+
+        }
+
+    }
+}

@@ -1,0 +1,63 @@
+﻿@page "/"
+@using Shared.Models
+@inject ITicketServices ticketservice 
+@using AppLogic.Services.TicketServices
+@using Shared.Models.Shared.Models
+
+
+
+<h3>Tickets</h3>
+
+@if (viewModelTickets != null && viewModelTickets.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID:</th>
+                <th>Rubrik:</th>
+                <th>Detailjer:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in viewModelTickets.OrderBy(t => t.Id))
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.Title</td>
+                    <td><a href="@($"TicketDetail/{ticket.Id}")">Se detaljer</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a href="@($"AllTags")">Se taggar</a>
+    <a href="@($"AddTicket")">Skapa ny ticket</a>
+}
+else
+{
+    <p>No tickets found</p>
+}
+
+@code {
+    List<TicketViewModel> viewModelTickets = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Gör HTTP-request till API:et med serviceklassen. 
+        var apiTickets = await ticketservice.GetTickets();
+
+        // Om det gick att deseralisera till APImodellen, omvandla till viewmodeller. 
+        if (apiTickets !=null && apiTickets.Any())
+        {
+            foreach (var apiModel in apiTickets)
+            {
+                TicketViewModel viewmodel = TicketViewModel.TicketViewModelFromApiModel(apiModel);
+                // Lägg till i listan med viewmodels. 
+                viewModelTickets.Add(viewmodel);
+            }
+
+        }
+       
+    }
+}
+    
+

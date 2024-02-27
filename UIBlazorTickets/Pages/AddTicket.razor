@@ -1,0 +1,131 @@
+﻿@page "/AddTicket"
+@using AppLogic.Services.TagService
+@using Shared.Models
+@inject ITicketServices ticketService
+@using AppLogic.Services.TicketServices
+@inject ITagService tagservice
+@using Shared.Models.Shared.Models
+
+
+<h3>Lägg till ny ticket</h3>
+
+<EditForm Model="@newTicket" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Title</label>
+        <InputText id="title" class="form-control" @bind-Value="newTicket.Title" />
+    </div>
+
+    <div class="form-group">
+        <label>Beskrivning</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="newTicket.Description" />
+    </div>
+
+    <div class="form-group">
+        <label>Inskickad av</label>
+        <InputText id="submittedBy" class="form-control" @bind-Value="newTicket.SubmittedBy" />
+    </div>
+
+    @if (allTags != null && allTags.Any())
+    {
+        <h2>Valbara taggar (klicka på en tagg för att inkludera den i din ticket)</h2>
+        <ul>
+            @foreach (var tag in allTags.OrderBy(t => t.Id))
+            {
+                <li>
+                    <a class="@($"tag-link-{tag.Id}") @(IsTagClicked(tag.Id) ? "tag-clicked" : "")" @onclick="() => AddTag(tag.Id)">@tag.Name</a>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No tags found</p>
+    }
+
+    <button type="submit" class="btn btn-primary">Skapa ticket</button>
+</EditForm>
+
+<style>
+
+    a:hover {
+        cursor: pointer;
+    }
+
+    .tag-clicked {
+        color: green;
+    }
+</style>
+
+@code {
+    private TicketAPIModel newTicket { get; set; } = new TicketAPIModel();
+    private List<TagModelAPIModel>? allTags { get; set; } = new();
+
+    private List<int> selectedTagsList { get; set; } = new List<int>(); // spara klickade tags 
+
+
+    private Dictionary<int, bool> tagClicked { get; set; } = new Dictionary<int, bool>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        allTags = await tagservice.GetTags(); // Hämta alla taggar från tagService
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // gör ticket api-modellen till en dbmodell istället.
+        TicketModel ticketmodel = new TicketModel
+        {
+            Id = newTicket.Id,
+            Description = newTicket.Description,
+            IsResolved = newTicket.IsResolved,
+            SubmittedBy = newTicket.SubmittedBy,
+            Title = newTicket.Title
+        };
+
+
+        if (selectedTagsList.Any()) // Om några taggar är valda ...
+        {
+            // ...Använd dess id för att mappa mot riktiga taggen 
+            foreach (int id in selectedTagsList)
+            {
+                TagModel realTag = await tagservice.GetTagbyId(id);
+                TicketTagModel ticketTagModel = new TicketTagModel
+                {
+                    Ticket = ticketmodel,
+                    Tag = realTag,
+                    TagId = realTag.Id,
+                    TicketId = ticketmodel.Id
+                };
+                ticketmodel.TicketTags.Add(ticketTagModel);
+            }
+
+        }
+
+        await ticketService.PostTicket(ticketmodel);
+    }
+
+    private void AddTag(int tagId)
+    {
+        if (!selectedTagsList.Contains(tagId))
+        {
+            selectedTagsList.Add(tagId); // Lägg till taggens id i listan
+        }
+
+        if (!tagClicked.ContainsKey(tagId))
+        {
+            tagClicked[tagId] = true;
+        }
+        else
+        {
+            tagClicked[tagId] = !tagClicked[tagId];
+        }
+    }
+
+    private bool IsTagClicked(int tagId)
+    {
+        return tagClicked.ContainsKey(tagId) && tagClicked[tagId];
+    }
+}

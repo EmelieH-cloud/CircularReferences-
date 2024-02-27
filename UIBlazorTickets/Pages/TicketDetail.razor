@@ -17,13 +17,20 @@
     </div>
 }
 
+@if (ShowTicketTags.Any())
+{
+    <h2>Taggar</h2>
+    @foreach (var tag in ShowTicketTags)
+    {
+        <p>@tag.Name</p>
+    }
+}
 
 
 @code {
 
     TicketViewModel? ticket;
-    List <TicketTagViewModel> ticketTags =new();
-    List<TagViewModel> viewModelTags = new();
+    List<TagModel> ShowTicketTags = new();
 
     [Parameter]
     public int id { get; set; }
@@ -39,7 +46,13 @@
             // Omvandla API-modellen till en ViewModel
             ticket = TicketViewModel.TicketViewModelFromApiModel(apiTicket);
 
-         
+            // Försök hämta alla tags som tillhör denna ticket. 
+            var tickettags = await tagservice.GetTagsForTicket(apiTicket.Id);
+
+            if (tickettags !=null)
+            {
+                ShowTicketTags = tickettags;
+            }
 
         }
 

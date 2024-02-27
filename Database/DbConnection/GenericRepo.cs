@@ -16,7 +16,6 @@ namespace Database.DbConnection
             _dbSet = context.Set<T>();
         }
 
-
         public List<T> GetAll()
         {
             return _dbSet.ToList();

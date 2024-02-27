@@ -7,6 +7,8 @@ namespace AppLogic.Services.TicketServices
 {
     public class TicketServices : ITicketServices
     { // Klass som gör HTTP-anrop till API:et och försöker returnera en API-modell efter deserialiseringen. 
+
+
         public HttpClient Client { get; set; } = new()
         {
             BaseAddress = new Uri("https://localhost:7249/api/")

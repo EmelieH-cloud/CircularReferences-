@@ -13,11 +13,13 @@ namespace App.Api.Controllers
 
         private readonly AppDbContext _context;
         private readonly GenericRepo<TicketModel> _ticketRepo;
+        private readonly TicketRepository _ticketRepository;
 
-        public TicketController(AppDbContext context, GenericRepo<TicketModel> ticketRepo)
+        public TicketController(AppDbContext context, GenericRepo<TicketModel> ticketRepo, TicketRepository ticketRepository)
         {
             _context = context;
             _ticketRepo = ticketRepo;
+            _ticketRepository = ticketRepository;
         }
 
         [HttpGet("Ticket/{id}")]
@@ -69,6 +71,13 @@ namespace App.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("TicketTags/{ticketId}")]
+        public ActionResult<List<TagModel>> GetTagsForTicket(int ticketId)
+        {
+            var tagsForTicket = _ticketRepository.GetTagsForTicket(ticketId); // Använd TicketRepository för att hämta taggar för ticket
+
+            return Ok(tagsForTicket);
+        }
 
 
     }

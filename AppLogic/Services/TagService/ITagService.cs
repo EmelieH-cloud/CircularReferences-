@@ -12,7 +12,7 @@ namespace AppLogic.Services.TagService
 
         public Task<TagModel> GetTagbyId(int id);
 
-
+        public Task<List<TagModel>> GetTagsForTicket(int ticketId);
         public Task PostTag(TagModelAPIModel tag);
     }
 }

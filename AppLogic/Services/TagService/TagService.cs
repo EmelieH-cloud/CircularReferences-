@@ -62,6 +62,25 @@ namespace AppLogic.Services.TagService
         {
             await Client.PostAsJsonAsync("Tag/PostTag", tag);
         }
+
+
+        public async Task<List<TagModel>> GetTagsForTicket(int ticketId)
+        {
+            var response = await Client.GetAsync($"Ticket/TicketTags/{ticketId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string tagJson = await response.Content.ReadAsStringAsync();
+                List<TagModel>? tagsForTicket = JsonConvert.DeserializeObject<List<TagModel>>(tagJson);
+
+                if (tagsForTicket != null)
+                {
+                    return tagsForTicket;
+                }
+            }
+
+            throw new HttpRequestException($"Error getting tags for ticket with ID: {ticketId}");
+        }
     }
 }
 

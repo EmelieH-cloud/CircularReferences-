@@ -21,9 +21,9 @@
         public class TicketTagViewModel
         {
             public int TicketId { get; set; }
-            public TicketModel Ticket { get; set; } = null!;
+            public TicketModel Ticket { get; set; }
             public int TagId { get; set; }
-            public TagModel Tag { get; set; } = null!;
+            public TagModel Tag { get; set; }
 
         }
 

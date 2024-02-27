@@ -94,8 +94,6 @@
                 TagModel realTag = await tagservice.GetTagbyId(id);
                 TicketTagModel ticketTagModel = new TicketTagModel
                 {
-                    Ticket = ticketmodel,
-                    Tag = realTag,
                     TagId = realTag.Id,
                     TicketId = ticketmodel.Id
                 };

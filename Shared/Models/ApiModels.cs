@@ -9,16 +9,10 @@
         public bool IsResolved { get; set; }
         public string? Image { get; set; }
 
-        public List<TicketTagAPIModel> TicketTags { get; set; } = new();
-        public List<ResponseAPIModel> Responses { get; set; } = new();
+        public List<TicketTagModel> TicketTags { get; set; } = new();
+        public List<ResponseModel> Responses { get; set; } = new();
     }
 
-    public class TicketTagAPIModel
-    {
-        public int TicketId { get; set; }
-        public int TagId { get; set; }
-        public TagModelAPIModel Tag { get; set; } = null!;
-    }
 
     public class TagModelAPIModel
     {

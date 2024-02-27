@@ -1,4 +1,4 @@
-Detta projekt löstes genoom att jag tog bort så kallade "cirkulära referenser mellan modellerna TicketModel, TagModel och TicketTagModel. 
+Detta projekt löstes genom att jag tog bort så kallade "cirkulära referenser mellan modellerna TicketModel, TagModel och TicketTagModel. 
 
 Cirkulära referenser kan uppstå när det finns en oändlig loop eller kedja av referenser mellan mina objekt. Detta sker när två objekt refererar till varandra, antingen direkt eller indirekt.
 
